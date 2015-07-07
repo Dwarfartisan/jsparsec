@@ -1,6 +1,7 @@
-var jsparsec = require('../../jsparsec');
+var jsParsec = require('../../jsparsec');
 
-jsparsec.atom.One();
+jsParsec.atom.one();
 
-jsparsec.combinator.Either()
+jsParsec.combinator.either();
+
 
