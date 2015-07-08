@@ -1,7 +1,5 @@
 var jsParsec = require('../../jsparsec');
 
-jsParsec.atom.one();
+var construtor = jsParsec.state;
 
-jsParsec.combinator.either();
-
-
+var state = new constructor();
