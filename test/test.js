@@ -23,13 +23,13 @@ describe("state",function (){
     })
     describe("nextBy",function () {
         it("should return b",function(){
-            console.log(state.pos())
             assert.equal(state.nextBy(function(x){return x==="b"}),'b')
         })
     })
     describe("seek_to",function(){
         it("seek_to the 0 position",function(){
             state.seekTo(0);
+            assert.equal(state.pos(),'0');
             assert.equal(state.next(),'a');
         })
     })
