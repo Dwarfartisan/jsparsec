@@ -23,7 +23,9 @@ describe("state",function (){
     })
     describe("nextBy",function () {
         it("should return b",function(){
-            assert.equal(state.nextBy(new Function("x","return x == 'b';")),'b')
+            assert.equal(state.nextBy(function(x){
+                return x == 'b';
+            }),'b')
         })
     })
     describe("seek_to",function(){
@@ -33,3 +35,15 @@ describe("state",function (){
         })
     })
 });
+/*
+
+var date =  "2015-01-01";
+var state = getState(time);
+var expression = many(oneOf('0','1','2','3','4','5','6','7','8','9')).bind(many(equal('-').bind(many(oneOf('0','1','2','3','4','5','6','7','8','9'),2))))
+//算子都应该有一个构造方法 用来接收state
+
+expression(state);
+
+
+
+*/
