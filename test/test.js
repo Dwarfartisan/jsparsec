@@ -13,7 +13,7 @@ var assert = chai.assert;
 describe("state",function (){
     describe("next",function () {
         it("should return item in states'ss position",function (){
-            
+
             assert.equal(state.next(),'a')
         })
     })
@@ -24,32 +24,8 @@ describe("state",function (){
     })
     describe("nextBy",function () {
         it("should return b",function(){
-            assert.equal(state.nextBy(new Function("return false;")),'b')
+            console.log(state.pos())
+            assert.equal(state.nextBy(function(x){return x==="b"}),'b')
         })
     })
 });
-
-
-
-
-
-
-
-
-
-
-
-// console.log(state.next());
-// console.log(state.pos());
-
-
-// console.log(state.next());
-// console.log(state.pos())
-
-// console.log(state.next());
-// console.log(state.pos())
-
-// var pred = function(item){
-//     return item == 'D';
-// };
-// console.log(state.nextBy(pred));
