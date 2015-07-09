@@ -12,8 +12,7 @@ var assert = chai.assert;
 
 describe("state",function (){
     describe("next",function () {
-        it("should return item in states'ss position",function (){
-
+        it("should return item in states'ss position that is 'a'",function (){
             assert.equal(state.next(),'a')
         })
     })
@@ -26,6 +25,12 @@ describe("state",function (){
         it("should return b",function(){
             console.log(state.pos())
             assert.equal(state.nextBy(function(x){return x==="b"}),'b')
+        })
+    })
+    describe("seek_to",function(){
+        it("seek_to the 0 position",function(){
+            state.seekTo(0);
+            assert.equal(state.next(),'a');
         })
     })
 });
