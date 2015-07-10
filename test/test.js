@@ -82,11 +82,10 @@ describe("parsec",function(){
     describe("combinator",function(){
         it("attempt",function(){
             var attempt = combinator.attempt;
-            var notEqual = atom.notEqual('a');
+            var psc = attempt(atom.notEqual('a'));
             var prePos = state.pos();
-            //这里为什么catch不住?
-            attempt(notEqual(state));
-            assert.notEqual(state.pos(),prePos);
+            assert.throw(function(){psc(state)}, Error);
+            assert.equal(state.pos(), prePos);
         })
         it("either",function(){
             var equal = atom.equal('b');
