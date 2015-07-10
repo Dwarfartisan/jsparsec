@@ -35,6 +35,14 @@ describe("state",function (){
         })
     })
 });
+
+describe("operator",function(){
+    describe("atom",function(){
+        it("one",function(){
+            
+        })
+    })
+})
 /*
 
 var date =  "2015-01-01";
