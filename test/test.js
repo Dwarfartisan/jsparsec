@@ -1,6 +1,6 @@
 var jsParsec = require('../../jsparsec');
 
-var op = jsParsec.getOperator;
+var op = jsParsec.getparsec;
 
 var states = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
 
@@ -41,27 +41,28 @@ describe("state",function (){
     })
 });
 
-describe("operator",function(){
+describe("parsec",function(){
     describe("atom",function(){
         it("one",function(){
             var one = atom.one();
             assert.instanceOf(one(state),Result);
         })
         it("equal",function(){
-            var equal = atom.equal('a');
-            equal(state);
-            assert.Throw(equal,Error);
+            var eq = atom.equal('a');
+            var re = eq(state);
+            assert.equal(re, 'a');
         })
-        it("notEqual",function(){
-            var notEqual = atom.notEqual('b');
-            notEqual(state);
-            assert.Throw(notEqual,Error)
+        it("not equal",function(){
+            var ne = atom.notEqual('b');
+            var re = ne(state)
+            assert.equal(re, 'a')
         })
-        it("oneOf",function(){
+        it("one of",function(){
             var oneOf = atom.oneOf('q','w','e','r','t','a');
-            oneOf(state);
+            var re = oneOf(state);
+            assert.equal(re, 'a')
             var oneOf2 = atom.oneOf('q','w','e','r','t','c');
-            oneOf2(state);
+            assert.throw(function(){oneOf2(state)}, Error)
         })
         it("noneOf",function(){
             var noneOf = atom.noneOf('q','w','e','r','t','c');
@@ -72,11 +73,11 @@ describe("operator",function(){
         it("pack",function(){
             var pack = atom.pack();
             pack();
-        })    
+        })
         it("fail",function(){
             var fail = atom.fail();
             fail();
-        })      
+        })
     })
     describe("combinator",function(){
         it("attempt",function(){
@@ -132,13 +133,13 @@ describe("operator",function(){
             var notEqual = atom.notEqual('b');
             var manyTail = combinator.manyTail(equal,notEqual);
             manyTail(state);
-        })    
+        })
         it("many1Tail",function(){
             var equal = atom.equal('b');
             var notEqual = atom.notEqual('b');
             var many1Tail = combinator.many1Tail(equal,notEqual);
             many1Tail(state);
-        }) 
+        })
         it("skip",function(){
             var equal = atom.equal('b');
             var notEqual = atom.notEqual('b');
