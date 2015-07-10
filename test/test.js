@@ -2,9 +2,7 @@ var jsParsec = require('../../jsparsec');
 
 var op = jsParsec.getOperator;
 
-var states = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
 
-var state = new jsParsec.state(states);
 
 var chai = require('chai');
 
@@ -18,6 +16,10 @@ var Result = jsParsec.model.Result;
 
 
 describe("state",function (){
+    var states = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+
+    var state = new jsParsec.state(states);
+    
     describe("next",function () {
         it("should return a ",function(){
             assert.equal(state.next(),'a')
