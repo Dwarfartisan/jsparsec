@@ -2,8 +2,6 @@ var jsParsec = require('../../jsparsec');
 
 var op = jsParsec.getparsec;
 
-
-
 var chai = require('chai');
 
 var assert = chai.assert;
