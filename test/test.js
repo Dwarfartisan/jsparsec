@@ -12,14 +12,17 @@ var combinator = jsParsec.combinator;
 
 var Result = jsParsec.model.Result;
 
+var tool = jsParsec.tool;
+
 //TODO :先把测试用例全部跑通,然后重新设计一下对外的接口,还有bind,then,over方法需要编写
 //所有throw字符串的方法全部改写成
 /*
-            var err = Error("expecting a value not equal " + x)
-            err.pos = state.pos()
-            throw err;
+var err = Error("expecting a value not equal " + x)
+err.pos = state.pos()
+throw err;
 这种格式
 
+many这种算子,似乎在state走到尽头的情况还没有考虑
 */
 
 
@@ -111,6 +114,7 @@ describe('parsec',function(){
             },Error);
         });
     });
+
     describe('combinator',function(){
         it('attempt',function(){
             state = new jsParsec.state('a');
@@ -174,6 +178,25 @@ describe('parsec',function(){
                 assert.equal('the first operator is fail , so sad',err.message);
             }
         });
+
+        it('many tail',function(){
+            state = new jsParsec.state('aaaaaaaaab');
+            var eq = atom.equal('a');
+            var ne = atom.notEqual('a');
+            var mat = combinator.manyTail(eq,ne);
+            mat(state);
+            assert.equal(10,state.pos());
+        });
+        it('many1 tail',function(){
+            state = new jsParsec.state('baaaaaaaaab');
+            var eq = atom.equal('a');
+            var ne = atom.notEqual('a');
+            var ma1t = combinator.many1Tail(eq,ne);
+            assert.throw(function(){
+                ma1t(state);
+            },Error);
+        });
+
         it('many',function(){
             state = new jsParsec.state('aaaaaaaaab');
             var equal = atom.equal('a');
@@ -188,50 +211,54 @@ describe('parsec',function(){
             var arr = ma(state);
             assert.equal(9,arr.length);
 
-//TODO : 这里需要重新设计
             state = new jsParsec.state('baaaaab');
             var ma1 = combinator.many1(eq);
             assert.throw(function () {
                 ma1(state);
             },Error);
         });
-        it('many tail',function(){
+        it('skip',function(){
+            state = new jsParsec.state('aaaaaaaaab');
+            var equal = atom.equal('a');
+            var sk = combinator.skip(equal);
+            sk(state);
+            assert.equal(9,state.pos());
+        });
+        it('skip1',function(){
             state = new jsParsec.state('aaaaaaaaab');
             var eq = atom.equal('a');
-            var ne = atom.notEqual('a');
-            var mat = combinator.manyTail(eq,ne);
-            mat(state);
-            assert.equal(10,state.pos());
+            var ma = combinator.many(eq);
+            var arr = ma(state);
+            assert.equal(9,state.pos());
+
+            state = new jsParsec.state('baaaaab');
+            var ma1 = combinator.many1(eq);
+            assert.throw(function () {
+                ma1(state);
+            },Error);
         });
-        // it('many1 tail',function(){
-        //     var equal = atom.equal('b');
-        //     var notEqual = atom.notEqual('b');
-        //     var many1Tail = combinator.many1Tail(equal,notEqual);
-        //     many1Tail(state);
-        // });
-    //     it('skip',function(){
-    //         var equal = atom.equal('b');
-    //         var notEqual = atom.notEqual('b');
-    //         var skip = combinator.skip(equal);
-    //         skip(state);
-    //     });
-    //     it('skip1',function(){
-    //         var equal = atom.equal('b');
-    //         var notEqual = atom.notEqual('b');
-    //         var skip1 = combinator.skip(equal);
-    //         skip1(state);
-    //     });
-    //     it('sep',function(){
-    //         var sepOp = atom.equal('|');
-    //         var notEqual = atom.notEqual('b');
-    //         var sep = combinator.sep(notEqual,sepOp);
-    //         sep(state);
-    //     });
-    //     it(sep1,function(){
-    //         var sepOp = atom.equal('|');
-    //         var notEqual = atom.notEqual('b');
-    //         var sep1 = combinator.sep(notEqual,sepOp);
-    //         sep1(state);
-    //     });
+        it('sep',function(){
+            state = new jsParsec.state('a|a|a|a');
+            var s = atom.equal('|');
+            var eq = atom.equal('a');
+            var sep = combinator.sep(s,eq);
+            var re = sep(state);
+            assert.equal(4,re.length);
+        });
+        it('sep1',function(){
+            state = new jsParsec.state('a|a|a|a');
+            var s = atom.equal('|');
+            var eq = atom.equal('a');
+            var sep1 = combinator.sep1(s,eq);
+            var re = sep1(state);
+            assert.equal(4,re.length);
+
+
+            state = new jsParsec.state('b|a|a|a')
+            var sep1 = combinator.sep1(s,eq);
+            assert.throw(function(){
+                sep1(state);
+            },Error);
+        });
     });
 });
