@@ -253,7 +253,6 @@ describe('parsec',function(){
             var re = sep1(state);
             assert.equal(4,re.length);
 
-
             state = new jsParsec.state('b|a|a|a')
             var sep1 = combinator.sep1(s,eq);
             assert.throw(function(){
