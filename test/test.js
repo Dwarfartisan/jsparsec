@@ -12,18 +12,12 @@ var combinator = jsParsec.combinator;
 
 var Result = jsParsec.model.Result;
 
-var tool = jsParsec.tool;
+var text = jsParsec.text;
 
-//TODO :先把测试用例全部跑通,然后重新设计一下对外的接口,还有bind,then,over方法需要编写
-//所有throw字符串的方法全部改写成
-/*
-var err = Error("expecting a value not equal " + x)
-err.pos = state.pos()
-throw err;
-这种格式
+//TODO :先把测试用例全部跑通,然后重新设计一下对外的接口
 
-many这种算子,似乎在state走到尽头的情况还没有考虑
-*/
+//many这种算子,似乎在state走到尽头的情况还没有考虑
+//异常不能直接抛 ,每个算子都应该定义自己的异常信息
 
 
 
@@ -257,6 +251,145 @@ describe('parsec',function(){
             var sep1 = combinator.sep1(s,eq);
             assert.throw(function(){
                 sep1(state);
+            },Error);
+        });
+    });
+    describe('text',function(){
+        it('digit',function(){
+            var digit = text.digit();
+            state = new jsParsec.state('a1');
+            assert.throw(function(){
+                digit(state);
+            },Error);
+            digit(state);
+        });
+        it('letter',function(){
+            var letter = text.letter();
+            state = new jsParsec.state('a1');
+            assert.equal('a',letter(state));
+            assert.throw(function(){
+                letter(state);
+            },Error);
+        });
+        it('alphaNumber',function(){
+            var al = text.alphaNumber();
+            state = new jsParsec.state('1a%');
+            assert.equal('1',al(state));
+            assert.equal('a',al(state));
+            assert.throw(function(){
+                al(state);
+            },Error);
+        });
+        it('string',function(){
+            var str = text.string('love');
+            state = new jsParsec.state('love you');
+            var re = str(state);
+            assert.equal('love',re);
+
+
+            assert.throw(function(){
+                str(state);
+            },Error);
+        });
+        it('white space',function(){
+            state = new jsParsec.state(' ');
+            var ws = text.whiteSpace();
+            assert.equal(' ',ws(state));
+
+            state = new jsParsec.state('i love you');
+            assert.throw(function(){
+                ws(state);
+            },Error);
+        });
+        it('new line',function(){
+            state = new jsParsec.state('\n');
+            var nl = text.newLine();
+            assert.equal('\n',nl(state));
+            // /r/n 算两个字符
+            state = new jsParsec.state('\r\n');
+            assert.equal('\r\n',nl(state));
+
+            state = new jsParsec.state('i love you');
+            assert.throw(function(){
+                nl(state);
+            },Error);
+        });
+        it('space',function(){
+            state = new jsParsec.state('\n \r\ni love you');
+            var sp = text.space();
+            assert.equal('\n',sp(state));
+            assert.equal(' ',sp(state));
+            assert.equal('\r\n',sp(state));
+            assert.throw(function(){
+                sp(state);
+            },Error);
+        });
+        it('uInt',function(){
+            state = new jsParsec.state('12');
+            var uInt = text.uInt();
+            assert.equal('12',uInt(state));
+
+
+            state = new jsParsec.state('i love you');
+            assert.throw(function(){
+                uInt(state);                
+            });
+
+
+            state = new jsParsec.state('12.3');
+            assert.throw(function(){
+                uInt(state);
+            },Error);
+        });
+        it('int',function(){
+            state = new jsParsec.state('-123');
+            var Int = text.Int();
+            assert.equal('-123',Int(state));
+
+            state = new jsParsec.state('123');
+            assert.equal('123',Int(state));
+        });
+        it('uFloat',function(){
+            state = new jsParsec.state('123.5asd');
+            var uFloat = text.uFloat();
+            assert.equal('123.5',uFloat(state));
+
+
+            state = new jsParsec.state('.5664');
+            assert.equal('0.5664',uFloat(state));
+
+            state = new jsParsec.state('45661');
+            assert.throw(function(){
+                uFloat(state);
+            },Error);
+        });
+        it('float',function(){
+            state = new jsParsec.state('123.5asd');
+            var Float = text.Float();
+            assert.equal('123.5',Float(state));
+
+
+            state = new jsParsec.state('.5664');
+            assert.equal('0.5664',Float(state));
+
+            state = new jsParsec.state('45661');
+            assert.throw(function(){
+                Float(state);
+            },Error);
+
+
+
+            state = new jsParsec.state('-123.5asd');
+            var Float = text.Float();
+            assert.equal('-123.5',Float(state));
+
+
+            state = new jsParsec.state('-.5664');
+            assert.equal('-0.5664',Float(state));
+
+            state = new jsParsec.state('-45661');
+            assert.throw(function(){
+                Float(state);
             },Error);
         });
     });
