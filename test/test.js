@@ -235,7 +235,7 @@ describe('parsec',function(){
             state = new jsParsec.state('a|a|a|a');
             var s = atom.equal('|');
             var eq = atom.equal('a');
-            var sep = combinator.sep(s,eq);
+            var sep = combinator.sep(eq, s);
             var re = sep(state);
             assert.equal(4,re.length);
         });
@@ -243,7 +243,7 @@ describe('parsec',function(){
             state = new jsParsec.state('a|a|a|a');
             var s = atom.equal('|');
             var eq = atom.equal('a');
-            var sep1 = combinator.sep1(s,eq);
+            var sep1 = combinator.sep1(eq, s);
             var re = sep1(state);
             assert.equal(4,re.length);
 
@@ -332,7 +332,7 @@ describe('parsec',function(){
 
             state = new jsParsec.state('i love you');
             assert.throw(function(){
-                uInt(state);                
+                uInt(state);
             });
 
 
