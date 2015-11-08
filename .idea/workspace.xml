@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="28886c20-15f9-4305-89b3-2d331037d916" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/atom.js" afterPath="$PROJECT_DIR$/lib/atom.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/combinator.js" afterPath="$PROJECT_DIR$/lib/combinator.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/state.js" afterPath="$PROJECT_DIR$/lib/state.js" />
-    </list>
+    <list default="true" id="28886c20-15f9-4305-89b3-2d331037d916" name="Default" comment="" />
     <ignored path="jsparsec.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
