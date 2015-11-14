@@ -159,7 +159,7 @@ describe('parsec',function(){
             var eq = atom.equal('a');
             var ne = atom.notEqual('a');
             var no = atom.noneOf('q','w','e','r','t','b','c');
-            var between = combinator.between(eq,ne,no);
+            var between = combinator.between(eq, no, ne);
             assert.equal(between(state),'b');
         });
         it('otherwise',function(){
