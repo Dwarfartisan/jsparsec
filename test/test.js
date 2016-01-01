@@ -177,7 +177,7 @@ describe('parsec',function(){
             state = new jsParsec.state('aaaaaaaaab');
             var eq = atom.equal('a');
             var ne = atom.notEqual('a');
-            var mat = combinator.manyTail(eq,ne);
+            var mat = combinator.manyTil(eq,ne);
             mat(state);
             assert.equal(10,state.pos());
         });
@@ -185,7 +185,7 @@ describe('parsec',function(){
             state = new jsParsec.state('baaaaaaaaab');
             var eq = atom.equal('a');
             var ne = atom.notEqual('a');
-            var ma1t = combinator.many1Tail(eq,ne);
+            var ma1t = combinator.many1Til(eq,ne);
             assert.throw(function(){
                 ma1t(state);
             },Error);
