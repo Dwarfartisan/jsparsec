@@ -1,6 +1,6 @@
 {
     "name": "jsparsec",
-    "main": "./src/index.js",
+    "main": "./dist/parsec.js",
     "description": "parsec js version",
     "version": "1.0",
     "devDependencies":{
