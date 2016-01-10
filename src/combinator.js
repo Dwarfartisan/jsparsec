@@ -191,8 +191,6 @@ var sep1 = function(p, s) {
     return fun;
 };
 
-
-
 exports.attempt = attempt;
 exports.otherwise  = otherwise;
 exports.choice = choice;
