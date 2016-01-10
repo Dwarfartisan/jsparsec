@@ -10,17 +10,17 @@ var one = function() {
             return new Result(result);
         }
     };
-    parsec(fun);    
+    parsec(fun);
     return fun;
 };
 
 
-var equal = function(x) {
+var eq = function(x) {
     var fun = function(state){
         if (state.next() === x) {
             return x;
         }else {
-            var err = Error("expecting a value equal " + x);
+            var err = Error("expecting a value equal" + x);
             err.pos = state.pos() - 1;
             throw err;
         }
@@ -31,11 +31,11 @@ var equal = function(x) {
 
 
 
-var notEqual = function(x) {
+var ne = function(x) {
     var fun = function(state){
         var data = state.next()
         if (data === x) {
-            var err = Error('expecting a value not equal ' + x);
+            var err = Error('expecting a value not equal' + x);
             err.pos = state.pos() - 1;
             throw err;
         }else{
@@ -43,7 +43,7 @@ var notEqual = function(x) {
         }
     };
     parsec(fun);
-    return fun; 
+    return fun;
 };
 
 var oneOf = function() {
@@ -82,8 +82,6 @@ var noneOf = function() {
     return fun;
 };
 
-
-
 var pack = function(element) {
     var fun = function() {
         return element;
@@ -104,37 +102,7 @@ var fail = function(description) {
 
 
 
-var charOf = function(string){
-    var fun = function(state){
-        var val = state.next();
-        for(var index in string){
-            if(string[index] === val){
-                return val;
-            }
-        };
-        var err = Error('not a char of ' + string);
-        err.pos = state.pos() - 1;
-        throw err;
-    };
-    parsec(fun);
-    return fun;
-};
 
-
-var charNoneof = function(string){
-    var fun = function(state){
-        var val = state.next();
-        for(var c in string){
-            if(c === val){
-                var err = Error('is a char of ' + string);
-                err.pos = state.pos();
-                throw err;
-            }
-        }
-        return val;
-    }
-    parsec(fun);
-};
 
 
 // space : \t  || '  ' || \n
@@ -146,14 +114,13 @@ var charNoneof = function(string){
 
 exports.one = one;
 exports.oneOf = oneOf;
-exports.equal = equal;
-exports.notEqual = notEqual;
+exports.eq = eq;
+exports.ne = ne;
 exports.noneOf = noneOf;
 exports.pack = pack;
 exports.Result = Result;
 exports.fail = fail;
-exports.charOf = charOf;
-exports.charNoneof = charNoneof;
+
 },{"./model.js":4,"./parsec.js":5}],2:[function(require,module,exports){
 var parsec = require('./parsec.js');
 var atom = require('./atom.js');
@@ -497,18 +464,49 @@ var combinator = require('./combinator.js');
 var atom = require('./atom.js')
 var parsec = require('./parsec.js');
 
-var equal = atom.equal;
+var eq = atom.eq;
 var either = combinator.either;
 var attempt = combinator.attempt;
-var notEqual = atom.notEqual;
+var ne = atom.ne;
+
+var charIn = function(string){
+    var fun = function(state){
+        var val = state.next();
+        for(var index in string){
+            if(string[index] === val){
+                return val;
+            }
+        };
+        var err = Error('not a char of ' + string);
+        err.pos = state.pos() - 1;
+        throw err;
+    };
+    parsec(fun);
+    return fun;
+};
+
+var charNone = function(string){
+    var fun = function(state){
+        var val = state.next();
+        for(var c in string){
+            if(c === val){
+                var err = Error('is a char of ' + string);
+                err.pos = state.pos();
+                throw err;
+            }
+        }
+        return val;
+    }
+    parsec(fun);
+};
 
 var digit = function() {
-    var fun = atom.charOf('0123456789');
+    var fun = charIn('0123456789');
     return fun;
 };
 
 var letter = function(){
-    var fun = atom.charOf('abcdefghijklmnopqrstuvwxyz');
+    var fun = charIn('abcdefghijklmnopqrstuvwxyz');
     return fun;
 };
 
@@ -538,7 +536,7 @@ var string = function(str){
 var uInt = function(){
     var fun = function(state){
         var ma = combinator.many1(digit()).bind(function(arr,state){
-            var at = combinator.attempt(atom.notEqual('.'));
+            var at = combinator.attempt(atom.ne('.'));
             at(state);
             return arr;
         });
@@ -558,7 +556,7 @@ var uInt = function(){
 
 
 function negtive(state) {
-    var neg = combinator.attempt(equal('-'));
+    var neg = combinator.attempt(eq('-'));
     var val;
     try{
         val = neg(state);
@@ -586,7 +584,7 @@ var Int = function(){
 var uFloat = function(){
     var fun = function (state) {
         var integer = combinator.many(digit());
-        var pot = equal('.');
+        var pot = eq('.');
         var deci = uInt();
         var arr = new Array();
         arr = arr.concat(integer(state));
@@ -616,25 +614,26 @@ var Float = function(){
 
 var newLine = function(){
     var fun = function(state){
-        var ei =either(attempt(equal('\n')),string('\r\n'));
+        var ei =either(attempt(eq('\n')),string('\r\n'));
         return ei(state);
     }
     parsec(fun);
     return fun;
 };
 
-
 var whiteSpace = function(){
-    var eq = equal(' ');
+    var eq = charIn(' \t');
     return eq;
 };
 
 var space = function(){
-    var ei = either(attempt(whiteSpace()),newLine());
+    var ei = eq(' ');
     return ei;
 };
 
 
+exports.charIn = charIn;
+exports.charNone = charNone;
 exports.digit = digit;
 exports.letter = letter;
 exports.alphaNumber = alphaNumber;

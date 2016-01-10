@@ -64,7 +64,7 @@ describe('parsec',function(){
         });
         it('equal',function(){
             state = new jsParsec.state('abc');
-            var eq = atom.equal('a');
+            var eq = atom.eq('a');
             var re = eq(state);
             assert.equal(re, 'a');
             assert.throw(function(){
@@ -73,7 +73,7 @@ describe('parsec',function(){
         });
         it('not equal',function(){
             state = new jsParsec.state('abc');
-            var ne = atom.notEqual('b');
+            var ne = atom.ne('b');
             var re = ne(state);
             assert.equal(re, 'a');
             assert.throw(function(){
@@ -112,7 +112,7 @@ describe('parsec',function(){
     describe('combinator',function(){
         it('attempt',function(){
             state = new jsParsec.state('a');
-            var ne = atom.notEqual('a');
+            var ne = atom.ne('a');
             var attempt = combinator.attempt(ne);
             var prePos = state.pos();
             assert.throw(function(){
@@ -122,16 +122,16 @@ describe('parsec',function(){
         });
         it('either',function(){
             state = new jsParsec.state('aac');
-            var eq = atom.equal('b');
-            var ne = atom.notEqual('b');
+            var eq = atom.eq('b');
+            var ne = atom.ne('b');
             var either = combinator.either(eq,ne);
             var re = either(state);
             assert.equal('a',re);
         });
         it('either or',function(){
             state = new jsParsec.state('abc');
-            var eq = atom.equal('b');
-            var ne = atom.notEqual('b');
+            var eq = atom.eq('b');
+            var ne = atom.ne('b');
             var no = atom.noneOf('q','w','e','r','t','b','c');
             var or = combinator.either(eq,ne).or(no);
             assert.throw(function(){
@@ -143,8 +143,8 @@ describe('parsec',function(){
         });
         it('choice',function(){
             state = new jsParsec.state('abc');
-            var eq = atom.equal('b');
-            var ne = atom.notEqual('b');
+            var eq = atom.eq('b');
+            var ne = atom.ne('b');
             var no = atom.noneOf('q','w','e','r','t','b','c');
             var choice = combinator.choice(eq,ne,no);
             assert.throw(function(){
@@ -156,15 +156,15 @@ describe('parsec',function(){
         });
         it('between',function(){
             state = new jsParsec.state('abd');
-            var eq = atom.equal('a');
-            var ne = atom.notEqual('a');
+            var eq = atom.eq('a');
+            var ne = atom.ne('a');
             var no = atom.noneOf('q','w','e','r','t','b','c');
             var between = combinator.between(eq, no, ne);
             assert.equal(between(state),'b');
         });
         it('otherwise',function(){
             state = new jsParsec.state('bd');
-            var eq = atom.equal('a');
+            var eq = atom.eq('a');
             var ow = combinator.otherwise(eq,'the first operator is fail , so sad');
             try{
                 ow(state);
@@ -174,22 +174,22 @@ describe('parsec',function(){
         });
         it('many till',function(){
             state = new jsParsec.state('aaaaaaaaab');
-            var a = atom.equal('a');
-            var na = atom.notEqual('a');
+            var a = atom.eq('a');
+            var na = atom.ne('a');
             var mat = combinator.manyTill(a,na);
             mat(state);
             assert.equal(10,state.pos());
         });
         it('many',function(){
             state = new jsParsec.state('aaaaaaaaab');
-            var equal = atom.equal('a');
+            var equal = atom.eq('a');
             var many = combinator.many(equal);
             var arr = many(state);
             assert.equal(9,arr.length);
         });
         it('many1',function(){
             state = new jsParsec.state('aaaaaaaaab');
-            var eq = atom.equal('a');
+            var eq = atom.eq('a');
             var ma = combinator.many(eq);
             var arr = ma(state);
             assert.equal(9,arr.length);
@@ -202,14 +202,14 @@ describe('parsec',function(){
         });
         it('skip',function(){
             state = new jsParsec.state('aaaaaaaaab');
-            var equal = atom.equal('a');
+            var equal = atom.eq('a');
             var sk = combinator.skip(equal);
             sk(state);
             assert.equal(9,state.pos());
         });
         it('skip1',function(){
             state = new jsParsec.state('aaaaaaaaab');
-            var eq = atom.equal('a');
+            var eq = atom.eq('a');
             var ma = combinator.many(eq);
             var arr = ma(state);
             assert.equal(9,state.pos());
@@ -222,16 +222,16 @@ describe('parsec',function(){
         });
         it('sep',function(){
             state = new jsParsec.state('a|a|a|a');
-            var s = atom.equal('|');
-            var eq = atom.equal('a');
+            var s = atom.eq('|');
+            var eq = atom.eq('a');
             var sep = combinator.sep(eq, s);
             var re = sep(state);
             assert.equal(4,re.length);
         });
         it('sep1',function(){
             state = new jsParsec.state('a|a|a|a');
-            var s = atom.equal('|');
-            var eq = atom.equal('a');
+            var s = atom.eq('|');
+            var eq = atom.eq('a');
             var sep1 = combinator.sep1(eq, s);
             var re = sep1(state);
             assert.equal(4,re.length);
@@ -281,9 +281,10 @@ describe('parsec',function(){
             },Error);
         });
         it('white space',function(){
-            state = new jsParsec.state(' ');
+            state = new jsParsec.state(' \t');
             var ws = text.whiteSpace();
             assert.equal(' ',ws(state));
+            assert.equal('\t',ws(state));
 
             state = new jsParsec.state('i love you');
             assert.throw(function(){
@@ -306,9 +307,10 @@ describe('parsec',function(){
         it('space',function(){
             state = new jsParsec.state('\n \r\ni love you');
             var sp = text.space();
-            assert.equal('\n',sp(state));
+            assert.throw(function(){
+                sp(state);
+            },Error);
             assert.equal(' ',sp(state));
-            assert.equal('\r\n',sp(state));
             assert.throw(function(){
                 sp(state);
             },Error);
