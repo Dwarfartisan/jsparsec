@@ -1,34 +1,34 @@
-var parsec = function(op){
-    if (op == null) {
-        op = new Object();
+var parsec = function(parser){
+    if (parser == null) {
+        parser = new Object();
     };
-    op.bind = function(handle){
+    parser.bind = function(handle){
         var item = function(state){
-            var val = op(state);
+            var val = parser(state);
             var re =  handle(val,state);
             return re;
         }
         parsec(item);
         return item;
     };
-    op.then = function(handle){
+    parser.then = function(handle){
         var item = function(state){
-            op(state);
+            parser(state);
             return handle(state);
         };
         parsec(item);
         return item;
     };
-    op.over = function(tail){
+    parser.over = function(tail){
         var item = function(state){
-            var val = op(state);
+            var val = parser(state);
             tail(state);
             return val;
         };
         parsec(item);
         return item;
     };
-    return op;
+    return parser;
 };
 
 module.exports = parsec;

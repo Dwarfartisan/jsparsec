@@ -172,25 +172,14 @@ describe('parsec',function(){
                 assert.equal('the first operator is fail , so sad',err.message);
             }
         });
-
-        it('many tail',function(){
+        it('many till',function(){
             state = new jsParsec.state('aaaaaaaaab');
-            var eq = atom.equal('a');
-            var ne = atom.notEqual('a');
-            var mat = combinator.manyTil(eq,ne);
+            var a = atom.equal('a');
+            var na = atom.notEqual('a');
+            var mat = combinator.manyTill(a,na);
             mat(state);
             assert.equal(10,state.pos());
         });
-        it('many1 tail',function(){
-            state = new jsParsec.state('baaaaaaaaab');
-            var eq = atom.equal('a');
-            var ne = atom.notEqual('a');
-            var ma1t = combinator.many1Til(eq,ne);
-            assert.throw(function(){
-                ma1t(state);
-            },Error);
-        });
-
         it('many',function(){
             state = new jsParsec.state('aaaaaaaaab');
             var equal = atom.equal('a');

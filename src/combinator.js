@@ -20,9 +20,9 @@ var attempt = function(p) {
 }
 
 
-var between = function(open, close, p) {
+var between = function(parseren, close, p) {
     var fun = function(state){
-        open(state);
+        parseren(state);
         var result = p(state);
         close(state);
         return result;
@@ -63,12 +63,12 @@ var otherwise = function(p,description) {
 
 
 var choice = function (){
-    var ops = arguments;
+    var parsers = arguments;
     var fun = function(state){
         var result = null;
-        for(var index in ops){
+        for(var index in parsers){
             try{
-                result = ops[index](state);
+                result = parsers[index](state);
                 break;
             }catch(err){
                 continue;
@@ -120,23 +120,22 @@ var many1 = function(p) {
 
 
 
-var manyTil = function(op,tailOp) {
+var manyTill = function(parser,end) {
     var fun = function(state){
-        many(op).over(tailOp)(state);
+        var re = new Array();
+        var e = attempt(end);
+        while (true) {
+            try{
+                e(state)
+                return re
+            } catch (err){
+                re.push(parser(state))
+            };
+        }
     };
     parsec(fun);
     return fun;
 };
-
-
-var many1Til = function(p,tailOp) {
-    var fun = function(state){
-        many1(p).over(tailOp)(state);
-    };
-    parsec(fun);
-    return fun;
-};
-
 
 var skip1 = function(p) {
     var fun = p.bind(function(x,state){
@@ -168,8 +167,8 @@ var skip = function(p) {
 
 var sep = function(p, s) {
     var fun = function(state){
-        var op = either(sep1(p, s), atom.pack(new Array(0)));
-        var re = op(state);
+        var parser = either(sep1(p, s), atom.pack(new Array(0)));
+        var re = parser(state);
         return re;
     };
     parsec(fun);
@@ -179,13 +178,13 @@ var sep = function(p, s) {
 
 var sep1 = function(p, s) {
     var fun = function(state){
-        var op = p.bind(function(x,state){
+        var parser = p.bind(function(x,state){
             var temp = new Array();
             temp.push(x);
             var re = temp.concat(many(s.then(p))(state));
             return re;
         });
-        var result = op(state);
+        var result = parser(state);
         return result;
     };
     parsec(fun);
@@ -201,8 +200,7 @@ exports.either = either;
 exports.between = between;
 exports.many = many;
 exports.many1 = many1;
-exports.manyTil = manyTil;
-exports.many1Til = many1Til;
+exports.manyTill = manyTill;
 exports.skip = skip;
 exports.skip1 = skip1;
 exports.sep = sep;

@@ -34,7 +34,7 @@ var string = function(str){
                 fail(state);
             };
         }
-        return arr.join(''); 
+        return arr.join('');
     };
     parsec(fun);
     return fun;
